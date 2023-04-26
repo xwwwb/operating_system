@@ -7,6 +7,7 @@
 #include <thread>
 #include <chrono>
 #include <iomanip>
+#include <string>
 using namespace std;
 
 class JobCtrlBlock {
