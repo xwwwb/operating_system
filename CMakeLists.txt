@@ -3,4 +3,13 @@ project(operating_system)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(operating_system job_schedule.cpp job_schedule.h main.cpp some_job.cpp some_job.h)
+# 下面的语句定义编译哪个目录
+set(Class 2) # 1: JobSchedule 2: ProcessSchedule
+
+if (Class EQUAL 1)
+    add_executable(operating_system src/JobSchedule/job_schedule.cpp src/JobSchedule/job_schedule.h
+            src/JobSchedule/main.cpp src/JobSchedule/some_job.cpp src/JobSchedule/some_job.h)
+elseif (Class EQUAL 2)
+    add_executable(operating_system src/ProcessSchedule/process_schedule.cpp src/ProcessSchedule/process_schedule.h
+            src/ProcessSchedule/main.cpp src/ProcessSchedule/some_process.cpp src/ProcessSchedule/some_process.h)
+endif ()
