@@ -3,4 +3,4 @@ project(operating_system)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(operating_system job_schedule.cpp job_schedule.h main.cpp)
+add_executable(operating_system job_schedule.cpp job_schedule.h main.cpp some_job.cpp some_job.h)
