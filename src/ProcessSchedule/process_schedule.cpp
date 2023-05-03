@@ -116,7 +116,6 @@ void Priority() {
             SuspendThread(running_job->m_thread->native_handle());// 调用win32 api 实现进程的挂起
         }
     }
-
     // 按照优先级排序
     sort(ready_queue.begin(), ready_queue.end(),
          [](ProcessCtrlBlock *a, ProcessCtrlBlock *b) {
