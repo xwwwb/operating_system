@@ -6,24 +6,24 @@
 
 using namespace std;
 
-void func1();
+void func1(const int *state);
 
-void func2();
+void func2(const int *state);
 
-void func3();
+void func3(const int *state);
 
-void func4();
+void func4(const int *state);
 
-void func5();
+void func5(const int *state);
 
-void func6();
+void func6(const int *state);
 
-void func7();
+void func7(const int *state);
 
-void func8();
+void func8(const int *state);
 
-void func9();
+void func9(const int *state);
 
-void func10();
+void func10(const int *state);
 
 #endif

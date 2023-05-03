@@ -1,19 +1,17 @@
 #include "process_schedule.h"
 #include "some_process.h"
-#include <fstream>
 
-vector<ProcessCtrlBlock *> ready_queue;  // 作业队列
-vector<ProcessCtrlBlock *> finish_queue; // 完成队列
+vector<ProcessCtrlBlock *> ready_queue; // 作业队列
+vector<ProcessCtrlBlock *> finish_queue;// 完成队列
 
 int now_time = 0;
-bool is_running = false;
 
-thread *running;
 ProcessCtrlBlock *running_job;
+
+vector<vector<int>> *time_slice;// 时间片
 
 void print(fstream *finish) {
     *finish << "作业完成结果：" << endl;
-
     double total_weighted_turnaround_time = 0;
     for (auto job: finish_queue) {
         // 依次计算 到达时间 开始时间 运行时间 完成时间 周转时间 带权周转时间
@@ -33,7 +31,34 @@ void print(fstream *finish) {
     }
     *finish << "平均带权周转时间："
             << total_weighted_turnaround_time / double(finish_queue.size())
+            << "\n"
             << endl;
+
+    // 将finish_queue中的按id排序
+    sort(finish_queue.begin(), finish_queue.end(),
+         [](ProcessCtrlBlock *a, ProcessCtrlBlock *b) { return a->id < b->id; });
+
+    *finish << "时间片分配情况：" << endl;
+    *finish << setiosflags(ios::left) << setw(10) << "name"
+            << "|";
+    for (auto job: finish_queue) {
+        *finish << setiosflags(ios::left) << setw(6) << job->name << "|";
+    }
+    *finish << endl;
+    for (int i = 0; i < time_slice->size(); i++) {
+        *finish << setiosflags(ios::left) << setw(10) << i + 1 << "|";
+        for (auto job: finish_queue) {
+            int is_run = (*time_slice)[i][job->id - 1];
+            if (is_run == 1) {
+                *finish << setiosflags(ios::left) << setw(6) << " ---- "
+                        << "|";
+            } else {
+                *finish << setiosflags(ios::left) << setw(6) << ""
+                        << "|";
+            }
+        }
+        *finish << endl;
+    }
 }
 
 void join_queue(ProcessCtrlBlock *job, fstream *join) {
@@ -63,6 +88,7 @@ void init(fstream *join) {
         thread t(join_queue, jobs[i], join);
         t.detach();
     }
+    time_slice = new vector<vector<int>>();
 }
 
 void clean() {
@@ -72,12 +98,12 @@ void clean() {
 }
 
 void Priority() {
-    // 检查是否有程序在运行
     if (running_job != nullptr) {
         if (running_job->round == running_job->service_time) {
             // 运行完毕
             running_job->end_time = now_time;
-            running->~thread();
+            cout << "终止" << running_job->name << endl;
+            running_job->status = 3;// 终止
             finish_queue.push_back(running_job);
             // 从就绪队列中删除
             ready_queue.erase(
@@ -85,7 +111,9 @@ void Priority() {
                     ready_queue.end());
             running_job = nullptr;
         } else {
-            running_job->status = 2; // 暂停
+            cout << "暂停" << running_job->name << endl;
+            running_job->status = 2;                              // 挂起
+            SuspendThread(running_job->m_thread->native_handle());// 调用win32 api 实现进程的挂起
         }
     }
 
@@ -97,22 +125,23 @@ void Priority() {
     // 取队列中的第一个作业运作
     if (!ready_queue.empty()) {
         ProcessCtrlBlock *job = ready_queue.front();
-        job->priority--; // 运行的作业优先级降低
-
-        job->status = 1; // 运行
+        job->priority--;                    // 运行的作业优先级降低
+        job->status = 1;                    // 运行
+        time_slice->back()[job->id - 1] = 1;// 修改时间片
         if (job->round == 0) {
             job->start_time = now_time;
-            running = new thread(job->func);
-            running->detach();
+            cout << "创建" << job->name << endl;
+            job->m_thread = new thread(job->func, &job->status);
+        } else {
+            ResumeThread(job->m_thread->native_handle());// 调用win32 api 实现进程的恢复
         }
-        job->round = job->round + 1;
-        running_job = job;
+        job->round = job->round + 1;// 轮转次数加一
+        running_job = job;          // 修改当前运行的作业
     }
     // 除了第一个队列中其余作业优先级提高
     for (int i = 1; i < ready_queue.size(); i++) {
         ready_queue[i]->priority++;
     }
-
 }
 
 int schedule(fstream *run) {
@@ -122,6 +151,8 @@ int schedule(fstream *run) {
                 break;
             }
         }
+        // 每运行一次 就推入一个时间片
+        time_slice->push_back(vector<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         Priority();
         // 当前两个队列 输出到run
         *run << "当前时间：" << now_time << endl;
@@ -138,8 +169,8 @@ int schedule(fstream *run) {
         for (auto job: finish_queue) {
             *run << job->name << "\t";
         }
-        *run << "\n" << endl;
-
+        *run << "\n"
+             << endl;
         this_thread::sleep_for(chrono::seconds(1));
         now_time++;
     }

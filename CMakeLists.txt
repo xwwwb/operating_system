@@ -12,4 +12,6 @@ if (Class EQUAL 1)
 elseif (Class EQUAL 2)
     add_executable(operating_system src/ProcessSchedule/process_schedule.cpp src/ProcessSchedule/process_schedule.h
             src/ProcessSchedule/main.cpp src/ProcessSchedule/some_process.cpp src/ProcessSchedule/some_process.h)
+elseif( Class EQUAL 0)
+    add_executable(operating_system demo.cpp)
 endif ()
