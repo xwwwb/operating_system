@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(operating_system)
 
 # 下面的语句定义编译哪个目录
-set(Class 3) # 1: JobSchedule 2: ProcessSchedule 0: demo 3: FirstFit
+set(Class 4) # 1: JobSchedule 2: ProcessSchedule 0: demo 3: FirstFit 4: BestFit
 
 if (Class EQUAL 1)
     set(CMAKE_CXX_STANDARD 17)
@@ -17,5 +17,8 @@ elseif (Class EQUAL 0)
     add_executable(operating_system demo.cpp src/FirstFit/main.c)
 elseif (Class EQUAL 3)
     set(CMAKE_C_STANDARD 11)
-    add_executable(operating_system src/FirstFit/main.c src/FirstFit/firstfit.h src/FirstFit/firstfit.c)
+    add_executable(operating_system src/FirstFit/main.c)
+elseif (Class EQUAL 4)
+    set(CMAKE_C_STANDARD 11)
+    add_executable(operating_system src/BestFit/main.c)
 endif ()

@@ -17,15 +17,15 @@ AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
 BraceWrapping:
+  AfterControlStatement: false
   AfterCaseLabel: false
   AfterClass: false
-  AfterControlStatement: Never
   AfterEnum: false
   AfterFunction: false
   AfterNamespace: false
   AfterUnion: false
   BeforeCatch: false
-  BeforeElse: false
+  BeforeElse: true
   IndentBraces: false
   SplitEmptyFunction: false
   SplitEmptyRecord: true
@@ -64,3 +64,4 @@ SpacesInParentheses: false
 SpacesInSquareBrackets: false
 TabWidth: 4
 UseTab: Never
+

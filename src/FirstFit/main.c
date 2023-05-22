@@ -1,7 +1,78 @@
-#include "firstfit.h"
+#include <stdlib.h>
+#include <stdio.h>
+struct Node {
+    int size;
+    int start;
+    int end;
+    int name;// 作业号
+    struct Node *next;
+    struct Node *prev;
+};
 // 头结点
 struct Node *head = NULL;
 int *name_list;
+// 初始化语句
+void init(int size);
+int allocate(int num, int size);
+int recycle(int num);
+void show();
+
+int main() {
+    printf("动态分区分配算法：首次适应算法\n");
+    printf("请指定内存大小：");
+    int memorySize;
+    scanf_s("%d", &memorySize);
+    init(memorySize);
+    while (1) {
+        printf("请选择操作：\t");
+        printf("1.给作业分配内存\t");
+        printf("2.回收作业内存\t");
+        printf("3.查看当前分区情况\t");
+        printf("4.退出\n");
+        int choice;
+        scanf_s("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("请输入作业号和需要大小，空格隔开：");
+                int num_1;
+                int size;
+                scanf_s("%d %d", &num_1, &size);
+                int result_1 = allocate(num_1, size);
+                if (result_1 == 0) {
+                    printf("分配成功\n");
+                } else if (result_1 == -1) {
+                    printf("分配失败，未找到满足条件的分区\n");
+                } else if (result_1 == -2) {
+                    printf("分配失败，作业号重复\n");
+                } else {
+                    printf("分配失败，未知错误\n");
+                }
+                break;
+            case 2:
+                printf("请输入作业号：");
+                int num_2;
+                scanf_s("%d", &num_2);
+                int result_2 = recycle(num_2);
+                if (result_2 == 0) {
+                    printf("回收成功\n");
+                } else if (result_2 == -1) {
+                    printf("回收失败，未找到作业号\n");
+                } else {
+                    printf("回收失败，未知错误\n");
+                }
+                break;
+            case 3:
+                show();
+                break;
+            case 4:
+                return 0;
+            default:
+                printf("输入错误，请重新输入\n");
+                break;
+        }
+    }
+    return 0;
+}
 void init(int size) {
     // 执行初始化语句
     head = malloc(sizeof(struct Node));
@@ -80,14 +151,15 @@ int recycle(int num) {
     while (p != NULL) {
         if (p->name == num) {
             if (p->prev != NULL && p->prev->name == -1) {
-                p->prev->size += p->size;
-                p->prev->end = p->end;
-                p->prev->next = p->next;
+                struct Node *temp = p->prev;
+                temp->size += p->size;
+                temp->end = p->end;
+                temp->next = p->next;
                 if (p->next != NULL) {
-                    p->next->prev = p->prev;
+                    p->next->prev = temp;
                 }
                 free(p);
-                p = p->prev;
+                p = temp;
             }
             if (p->next != NULL && p->next->name == -1) {
                 p->size += p->next->size;
@@ -100,7 +172,6 @@ int recycle(int num) {
                 }
                 free(temp);
             }
-            // 这里存在问题 当两次均为空的时候会报错
             p->name = -1;
             return 0;
         }
