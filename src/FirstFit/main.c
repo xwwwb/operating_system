@@ -21,7 +21,7 @@ int main() {
     printf("动态分区分配算法：首次适应算法\n");
     printf("请指定内存大小：");
     int memorySize;
-    scanf_s("%d", &memorySize);
+    scanf("%d", &memorySize);
     init(memorySize);
     while (1) {
         printf("请选择操作：\t");
@@ -30,13 +30,13 @@ int main() {
         printf("3.查看当前分区情况\t");
         printf("4.退出\n");
         int choice;
-        scanf_s("%d", &choice);
+        scanf("%d", &choice);
         switch (choice) {
             case 1:
                 printf("请输入作业号和需要大小，空格隔开：");
                 int num_1;
                 int size;
-                scanf_s("%d %d", &num_1, &size);
+                scanf("%d %d", &num_1, &size);
                 int result_1 = allocate(num_1, size);
                 if (result_1 == 0) {
                     printf("分配成功\n");
@@ -51,7 +51,7 @@ int main() {
             case 2:
                 printf("请输入作业号：");
                 int num_2;
-                scanf_s("%d", &num_2);
+                scanf("%d", &num_2);
                 int result_2 = recycle(num_2);
                 if (result_2 == 0) {
                     printf("回收成功\n");
