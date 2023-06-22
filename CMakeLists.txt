@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(operating_system)
 
 # 下面的语句定义编译哪个目录
-set(Class 4) # 1: JobSchedule 2: ProcessSchedule 0: demo 3: FirstFit 4: BestFit
+set(Class 5) # 1: JobSchedule 2: ProcessSchedule 0: demo 3: FirstFit 4: BestFit 5: PagingStorage
 
 if (Class EQUAL 1)
     set(CMAKE_CXX_STANDARD 17)
@@ -21,4 +21,7 @@ elseif (Class EQUAL 3)
 elseif (Class EQUAL 4)
     set(CMAKE_C_STANDARD 11)
     add_executable(operating_system src/BestFit/main.c)
+elseif (Class EQUAL 5)
+    set(CMAKE_CXX_STANDARD 17)
+    add_executable(operating_system src/PagingStorage/main.cpp src/PagingStorage/page.cpp src/PagingStorage/page.h)
 endif ()
