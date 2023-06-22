@@ -2,7 +2,8 @@
 #define PAGE
 #include <iostream>
 #include <vector>
-
+#include <algorithm>
+#include <string>
 const int BlockSize = 1024;// 1KB
 using namespace std;
 struct Block {
