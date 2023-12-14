@@ -29,6 +29,7 @@ int main() {
         occupy.push_back(block);
     }
     Page page(occupy);
+    infile.close();
     while (true) {
         // 打印功能
         cout << "\n请输入功能编号\n1.创建作业 2.删除作业 3.查看作业的内存分配 4.退出" << endl;
